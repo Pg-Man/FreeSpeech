@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}My blog{% endblock %}
+{% block headmessage %}
+    {% if message %}
+        <div class="alert alert-warning">{{ message }}</div>
+    {% endif %}
+{% endblock %}
+{% block content %}
+    <!--{% for post in posts %}-->
+        <!--<div class="panel panel-default">-->
+            <!--<div class="panel-heading">-->
+                <!--<p style="font-family:微软雅黑;font-size:14pt;font-weight:blod;">-->
+                <!--<a href="post/{{post.slug}}">{{post.title}}</a>-->
+                <!--</p>-->
+            <!--</div>-->
+            <!--<div class="panel-body" style="background-color:#ffffdd">-->
+                <!--<p>-->
+                    <!--{{post.body|truncatechars:10}}-->
+                <!--</p>-->
+            <!--</div>-->
+            <!--<div class="panel-footer" style="background-color:#efefef">-->
+                <!--<p>-->
+                    <!--发布时间:{{post.pub_date|date:"Y M D, h:m:s"}}-->
+                <!--</p>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--{% endfor %}-->
+<script>
+    function go_delete(id){
+    var user_pass = document.getElementById('user_pass').value;
+    if(user_pass!=""){
+        var usr = '/'+id+'/'+user_pass;
+        window.location = usr;
+        }
+       }
+</script>
+<form name="my form" action="/" method="GET">{% csrf_token %}
+    现在的心情:<br/>
+    {% for m in moods %}
+    <input type="radio" name="mood" value="{{ m.status }}">{{ m.status }}
+    <!--循环取心情-->
+    {% endfor %}
+    <br/>
+    心情留言版：<br/>
+    <textarea name="user_post" rows=3 cols=70></textarea><br/>
+    <label for="user_id" >您的昵称：</label>
+    <input id="user_id" type="text" name="user_id">
+    <label for="user_pass">张贴/删除密码：</label>
+    <input id="user_pass" type="password" name="user_pass"><br/>
+    <input type="submit" value="张贴">
+    <input type="reset" value="清除重填">
+</form>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel-heading" align="center">
+            <h3>~~宝宝心里苦，宝宝只想在这里说~~</h3>
+        </div>
+    </div>
+</div>
+{% for p in posts %}
+    {% cycle "<div class='row'> <div class='col-md-12'>" "<div class='col-md-12'>" "<div class='col-md-12'>" %}
+        <div class="panel panel-primary">
+            <div class="panel-heading">【{{ p.nickname }}】觉得{{ p.mood }}</div>
+            <div class="panel-body">{{ p.message | linebreaks }}</div>
+            <div class="panel-footer" align="right"><i><small>{{ p.pub_time }}</small></i><span class="glyphicon glyphicon-trash" onclick="go_delete({{ p.id }})"></span></div>
+        </div>
+    {% cycle "</div></div>" "</div>" "</div>" %}
+{% endfor %}
+{% endblock %}
